@@ -65,10 +65,10 @@ describe("UsersService", () => {
         password: "password",
       });
 
-      const token = await service.loginUser("1", "email@email.com", "password");
+      const token = await service.loginUser("email@email.com", "password");
 
       expect(token).toBe("fake-jwt-token");
-      expect(mockRepository.getUserCheckFromDB).toHaveBeenCalledWith("1", "email@email.com", "password");
+      expect(mockRepository.getUserCheckFromDB).toHaveBeenCalledWith("email@email.com", "password");
       expect(generateToken).toHaveBeenCalledWith({
         userId: "1",
         email: "email@email.com",
@@ -78,7 +78,7 @@ describe("UsersService", () => {
     it("Should throw error if user does not exist", async () => {
       mockRepository.getUserCheckFromDB.mockResolvedValue(null as any);
 
-      await expect(service.loginUser("1", "bia@email.com", "senha123"))
+      await expect(service.loginUser("1", "bia@email.com"))
         .rejects.toThrow("User not exists!");
     });
 
@@ -89,7 +89,7 @@ describe("UsersService", () => {
         password: "321"
       });
 
-      await expect(service.loginUser("1", "bia@email.com", "senha123"))
+      await expect(service.loginUser("1", "bia@email.com"))
         .rejects.toThrow("Invalid credentials!");
     });
   });

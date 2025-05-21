@@ -36,16 +36,16 @@ describe.only("PlaylistService", () => {
     it("Should add a playlist successfully", async () => {
         mock.addPlaylistDB.mockResolvedValue("Playlist added successfully!");
 
-        const result = await service.addPlaylist("my-playlist");
+        const result = await service.addPlaylist("my-playlist", "userId");
 
         expect(result).toBe("Playlist added successfully!");
-        expect(mock.addPlaylistDB).toHaveBeenCalledWith("my-playlist");
+        expect(mock.addPlaylistDB).toHaveBeenCalledWith("my-playlist", "userId");
     });
 
     it("Should throw error if playlist is not added", async () => {
       mock.addPlaylistDB.mockResolvedValue(null as any);
 
-      await expect(service.addPlaylist("my-playlist"))
+      await expect(service.addPlaylist("my-playlist", "userId"))
         .rejects
         .toThrow("Playlist not added. Try again!");
     });
@@ -55,14 +55,14 @@ describe.only("PlaylistService", () => {
     it("Should return all playlists", async () => {
         const playlistData = [
             { 
-                id: "1", 
+                playlistId: "1", 
                 name: "P1" 
             }
         ] as IPlaylistData[];
 
         mock.getPlaylistDB.mockResolvedValue(playlistData);
 
-        const result = await service.getPlaylist();
+        const result = await service.getPlaylist("userId");
 
         expect(result).toEqual(playlistData);
     });
@@ -72,7 +72,7 @@ describe.only("PlaylistService", () => {
     it("Must update playlist name", async () => {
       mock.updateNamePlaylistDB.mockResolvedValue("id");
 
-      const result = await service.updateNamePlaylist("1", "new name");
+      const result = await service.updateNamePlaylist("1", "new name", "userId");
 
       expect(result).toBe("id");
     });
@@ -80,7 +80,7 @@ describe.only("PlaylistService", () => {
     it("Should throw error if playlist is not updated", async () => {
       mock.updateNamePlaylistDB.mockResolvedValue(null as any);
 
-      await expect(service.updateNamePlaylist("1", "new name"))
+      await expect(service.updateNamePlaylist("1", "new name", "userId"))
         .rejects
         .toThrow("Playlist name not update. Try again!");
     });
@@ -90,7 +90,7 @@ describe.only("PlaylistService", () => {
     it("Should remove the playlist successfully", async () => {
       mock.removePlaylistDB.mockResolvedValue("Playlist removed successfully!");
 
-      const result = await service.removePlaylist("1");
+      const result = await service.removePlaylist("1", "userId");
 
       expect(result).toBe("Playlist removed successfully!");
     });
@@ -98,7 +98,7 @@ describe.only("PlaylistService", () => {
     it("Should throw error if playlist is not removed", async () => {
       mock.removePlaylistDB.mockResolvedValue(null as any);
 
-      await expect(service.removePlaylist("1"))
+      await expect(service.removePlaylist("1", "userId"))
         .rejects
         .toThrow("Playlist not removed. Try again!");
     });
@@ -108,7 +108,7 @@ describe.only("PlaylistService", () => {
     it("Must add a track to the playlist", async () => {
       mock.addTrackToPlaylistDB.mockResolvedValue("Track added successfully!");
 
-      const result = await service.addTrackToPlaylist("1", trackData);
+      const result = await service.addTrackToPlaylist("1", trackData, "userId");
 
       expect(result).toBe("Track added successfully!");
     });
@@ -116,7 +116,7 @@ describe.only("PlaylistService", () => {
     it("Should throw error if track is not added", async () => {
       mock.addTrackToPlaylistDB.mockResolvedValue(null as any);
 
-      await expect(service.addTrackToPlaylist("1", trackData))
+      await expect(service.addTrackToPlaylist("1", trackData, "userId"))
         .rejects
         .toThrow("Track not added. Try again!");
     });
@@ -126,7 +126,7 @@ describe.only("PlaylistService", () => {
     it("Must remove a track from the playlist", async () => {
       mock.removeTrackFromPlaylistDB.mockResolvedValue("Track removed successfully!");
 
-      const result = await service.removeTrackFromPlaylist("1", 1);
+      const result = await service.removeTrackFromPlaylist("1", 1, "userId");
 
       expect(result).toBe("Track removed successfully!");
     });
@@ -134,7 +134,7 @@ describe.only("PlaylistService", () => {
     it("deve lançar erro se a faixa não for removida", async () => {
       mock.removeTrackFromPlaylistDB.mockResolvedValue(null as any);
 
-      await expect(service.removeTrackFromPlaylist("1", 1))
+      await expect(service.removeTrackFromPlaylist("1", 1, "userId"))
         .rejects
         .toThrow("Track not removed. Try again!");
     });
@@ -145,7 +145,7 @@ describe.only("PlaylistService", () => {
 
       mock.listTracksFromPlaylistDB.mockResolvedValue([trackData]);
 
-      const result = await service.listTracksFromPlaylist("1");
+      const result = await service.listTracksFromPlaylist("1", "userId");
 
       expect(result).toEqual([trackData]);
     });
