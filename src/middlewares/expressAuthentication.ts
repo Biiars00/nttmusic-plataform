@@ -1,0 +1,40 @@
+import { Request } from "express";
+import { verify } from "jsonwebtoken";
+
+declare module "express" {
+  export interface Request {
+    userId?: string;
+    email?: string;
+  }
+}
+
+export async function expressAuthentication(
+  request: Request,
+  _securityName: string,
+  _scopes?: string[],
+): Promise<any> {
+  const authHeader = request.headers.authorization;
+
+  if (!authHeader?.startsWith("Bearer ")) {
+    throw new Error("No token provided");
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+    if (!JWT_SECRET_KEY) {
+      throw new Error("JWT_SECRET is not defined");
+    }
+
+    const decoded = verify(token, JWT_SECRET_KEY) as { userId: string; email: string };
+
+    request.userId = decoded.userId;
+    request.email = decoded.email;
+
+    return decoded;
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    throw new Error("Invalid or expired token");
+  }
+}
