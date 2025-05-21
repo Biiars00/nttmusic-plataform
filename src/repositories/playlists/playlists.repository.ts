@@ -13,29 +13,21 @@ class PlaylistsRepository
     this.db = databaseConfig.firestore().collection('playlist');
   }
 
-  async addPlaylistDB(name: string): Promise<string> {
+  async addPlaylistDB(name: string, userId: string): Promise<string> {
     const refDB = this.db;
-    const docRef = refDB.doc();
-    const id = docRef.id;
 
-    const docData = await refDB.get();
-    docData.docs.map((doc) => {
-      if (name === doc.data().name) {
-        console.error('Playlist already exists!');
-        throw new Error('Playlist already exists!');
-      }
-    })
+    const docRef = await refDB.add({
+      name: name,
+      userId: userId
+    });
 
-    await docRef.set({
-      id: id,
-      name: name
-    })
+    docRef.update({ playlistId: docRef.id});
 
     return 'Playlist added successfully!';
   }
 
-  async getPlaylistDB(): Promise<IPlaylistData[]> {
-    const refDB = await this.db.get();
+  async getPlaylistDB(userId: string): Promise<IPlaylistData[]> {
+    const refDB = await this.db.where('userId', '==', userId).get();
     
     const playlists = refDB.docs.map((doc) => {
       const docData = doc.data() as IPlaylistData;
@@ -50,23 +42,24 @@ class PlaylistsRepository
     return playlists;
   }
 
-  async removePlaylistDB(playlistId: string): Promise<string> {
-    const refDB = await this.db.doc(playlistId.toString()).get();
+  async removePlaylistDB(playlistId: string, userId: string): Promise<string> {
+    const refDB = this.db.doc(playlistId.toString());
+    const doc = await refDB.get();
 
-    if (refDB.exists) {
-      refDB.ref.delete();
+    if (doc.exists && doc.data()?.userId === userId) {
+      await refDB.delete();
 
       return 'Playlist removed successfully!';
-    } else {
+    }  else {
       throw new Error('Document not found!');
     }
   }
 
-  async updateNamePlaylistDB(id: string, name: string): Promise<string> {
-    const refDB = this.db;
-    const docRef = await refDB.doc(id).get();
+  async updateNamePlaylistDB(playlistId: string, name: string, userId: string): Promise<string> {
+    const refDB = this.db.doc(playlistId);
+    const docRef = await refDB.get();
 
-    if (docRef.exists) {
+    if (docRef.exists && docRef.data()?.userId === userId) {
       docRef.ref.update({ name: name })
 
       return 'Playlist name updated successfully!';
@@ -75,8 +68,8 @@ class PlaylistsRepository
     }
   }
 
-  async listTracksFromPlaylistDB(playlistId: string): Promise<ITrackData[]> {
-    const refDB = await this.db.doc(playlistId).collection('tracks').get();
+  async listTracksFromPlaylistDB(playlistId: string, userId: string): Promise<ITrackData[]> {
+    const refDB = await this.db.doc(playlistId).collection('tracks').where('userId', '==', userId).get();
 
     const playlist = refDB.docs.map((doc) => {
       const docData = doc.data() as ITrackData;
@@ -91,22 +84,22 @@ class PlaylistsRepository
     return playlist;
   }
 
-  async addTrackToPlaylistDB(playlistId: string, track: ITrackData): Promise<string> {
-    const refDB = this.db.doc(playlistId).collection('tracks')
+  async addTrackToPlaylistDB(playlistId: string, track: ITrackData, userId: string): Promise<string> {
+    const refDB = this.db.doc(playlistId).collection('tracks');
     
-    await refDB.doc(track.id.toString()).set(track);
+    await refDB.doc(track.id.toString()).set({...track, userId: userId});
 
     return 'Track added successfully!';
   }
 
-  async removeTrackFromPlaylistDB(playlistId: string, trackId: number): Promise<string> {
+  async removeTrackFromPlaylistDB(playlistId: string, trackId: number, userId: string): Promise<string> {
     const refDB = await this.db
       .doc(playlistId)
       .collection('tracks')
       .doc(trackId.toString())
       .get();
 
-    if (refDB.exists) {
+    if (refDB.exists && refDB.data()?.userId === userId) {
       refDB.ref.delete();
 
       return 'Track removed successfully!';

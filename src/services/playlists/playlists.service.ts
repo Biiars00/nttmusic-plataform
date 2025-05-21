@@ -11,8 +11,8 @@ class PlaylistService implements IPlaylistService {
         private playlistsRepository: IPlaylistsRepository,
     ) {}
 
-    async addPlaylist(name: string): Promise<string> {
-        const responseDB = await this.playlistsRepository.addPlaylistDB(name);
+    async addPlaylist(name: string, userId: string): Promise<string> {
+        const responseDB = await this.playlistsRepository.addPlaylistDB(name, userId);
 
         if (!responseDB) {
             throw new Error("Playlist not added. Try again!")
@@ -21,14 +21,14 @@ class PlaylistService implements IPlaylistService {
         return responseDB;
     }
 
-    async getPlaylist(): Promise<IPlaylistData[]> {
-        const playlists = await this.playlistsRepository.getPlaylistDB();
+    async getPlaylist(userId: string): Promise<IPlaylistData[]> {
+        const playlists = await this.playlistsRepository.getPlaylistDB(userId);
 
         return playlists;
     }
 
-    async updateNamePlaylist(id: string, name: string): Promise<string> {
-        const responseDB = await this.playlistsRepository.updateNamePlaylistDB(id, name);
+    async updateNamePlaylist(playlistId: string, name: string, userId: string): Promise<string> {
+        const responseDB = await this.playlistsRepository.updateNamePlaylistDB(playlistId, name, userId);
 
         if (!responseDB) {
             throw new Error("Playlist name not update. Try again!")
@@ -37,8 +37,8 @@ class PlaylistService implements IPlaylistService {
         return responseDB;
     }
 
-    async removePlaylist(playlistId: string): Promise<string> {
-        const responseDB = await this.playlistsRepository.removePlaylistDB(playlistId);
+    async removePlaylist(playlistId: string, userId: string): Promise<string> {
+        const responseDB = await this.playlistsRepository.removePlaylistDB(playlistId, userId);
 
         if (!responseDB) {
             throw new Error("Playlist not removed. Try again!")
@@ -47,8 +47,8 @@ class PlaylistService implements IPlaylistService {
         return responseDB;
     }
 
-    async addTrackToPlaylist(playlistId: string, track: ITrackData): Promise<string> {
-        const addTrackDB = await this.playlistsRepository.addTrackToPlaylistDB(playlistId, track);
+    async addTrackToPlaylist(playlistId: string, track: ITrackData, userId: string): Promise<string> {
+        const addTrackDB = await this.playlistsRepository.addTrackToPlaylistDB(playlistId, track, userId);
 
         if (!addTrackDB) {
             throw new Error("Track not added. Try again!")
@@ -57,8 +57,8 @@ class PlaylistService implements IPlaylistService {
         return addTrackDB;
     }
 
-    async removeTrackFromPlaylist(playlistId: string, trackId: number): Promise<string> {
-        const removeTrackDB = await this.playlistsRepository.removeTrackFromPlaylistDB(playlistId, trackId);
+    async removeTrackFromPlaylist(playlistId: string, trackId: number, userId: string): Promise<string> {
+        const removeTrackDB = await this.playlistsRepository.removeTrackFromPlaylistDB(playlistId, trackId, userId);
 
         if (!removeTrackDB) {
             throw new Error("Track not removed. Try again!")
@@ -67,8 +67,8 @@ class PlaylistService implements IPlaylistService {
         return removeTrackDB;
     }
 
-    async listTracksFromPlaylist(playlistId: string): Promise<ITrackData[]> {
-        const responseDB = await this.playlistsRepository.listTracksFromPlaylistDB(playlistId);
+    async listTracksFromPlaylist(playlistId: string, userId: string): Promise<ITrackData[]> {
+        const responseDB = await this.playlistsRepository.listTracksFromPlaylistDB(playlistId, userId);
 
         return responseDB;
     }

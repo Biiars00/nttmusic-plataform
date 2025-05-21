@@ -3,6 +3,7 @@ import { Body, Delete, Get, Path, Post, Put, Request as Request, Route, Security
 import { ITrackData } from "../../interfaces/services/musics/musics.interface";
 import PlaylistService from "../../services/playlists/playlists.service";
 import { IPlaylistData } from "../../interfaces/repositories/playlists/playlists.interface";
+import { AuthenticatedRequest } from "express";
 
 @injectable()
 @Route("/playlist")
@@ -15,7 +16,7 @@ class PlaylistsController {
 
   @Post("/")
   @Security("jwt")
-  async addPlaylist(@Body() body: { name: string }): Promise<string> {
+  async addPlaylist(@Request() req: AuthenticatedRequest, @Body() body: { name: string }): Promise<string> {
     const { name } = body;
 
     if (!name) {
@@ -23,7 +24,8 @@ class PlaylistsController {
     }
 
     try {
-      const response = await this.playlistService.addPlaylist(name);
+      const userId = req.user.userId;
+      const response = await this.playlistService.addPlaylist(name, userId!);
 
       if (!response) {
         throw new Error("Resource not found!");
@@ -37,9 +39,10 @@ class PlaylistsController {
 
   @Get("/")
   @Security("jwt")
-  async getPlaylist(): Promise<IPlaylistData[]> {
+  async getPlaylist(@Request() req: AuthenticatedRequest): Promise<IPlaylistData[]> {
     try {
-      const response = await this.playlistService.getPlaylist();
+      const userId = req.user.userId;
+      const response = await this.playlistService.getPlaylist(userId!);
 
       if (!response) {
         throw new Error("Resource not found!");
@@ -53,7 +56,7 @@ class PlaylistsController {
 
   @Put("/:id")
   @Security("jwt")
-  async updateNamePlaylist(@Path() id: string, @Body() body: { name: string } ): Promise<string> {
+  async updateNamePlaylist(@Request() req: AuthenticatedRequest, @Path() id: string, @Body() body: { name: string } ): Promise<string> {
     const { name } = body;
 
     if (!name && !id) {
@@ -61,7 +64,8 @@ class PlaylistsController {
     }
 
     try {
-      const response = await this.playlistService.updateNamePlaylist(id, name);
+      const userId = req.user.userId;
+      const response = await this.playlistService.updateNamePlaylist(id, name, userId!);
 
       if (!response) {
         throw new Error("Resource not found!");
@@ -75,9 +79,10 @@ class PlaylistsController {
 
   @Delete("/:id")
   @Security("jwt")
-  async removePlaylist(@Path() id: string): Promise<string> {
+  async removePlaylist(@Request() req: AuthenticatedRequest, @Path() id: string): Promise<string> {
     try {
-      const response = await this.playlistService.removePlaylist(id);
+      const userId = req.user.userId;
+      const response = await this.playlistService.removePlaylist(id, userId!);
 
       if (!response) {
         throw new Error("Resource not found!");
@@ -91,9 +96,10 @@ class PlaylistsController {
 
   @Get("/:id")
   @Security("jwt")
-  async listTracksFromPlaylist(id: string): Promise<ITrackData[]> {
+  async listTracksFromPlaylist(@Request() req: AuthenticatedRequest, @Path() id: string): Promise<ITrackData[]> {
     try {
-      const response = await this.playlistService.listTracksFromPlaylist(id);
+      const userId = req.user.userId;
+      const response = await this.playlistService.listTracksFromPlaylist(id, userId!);
 
       if (!response) {
         throw new Error("Resource not found!");
@@ -107,9 +113,10 @@ class PlaylistsController {
 
   @Post("/:id")
   @Security("jwt")
-  async addTrackToPlaylist(@Path() id: string, @Body() track: ITrackData): Promise<string> {
+  async addTrackToPlaylist(@Request() req: AuthenticatedRequest, @Path() id: string, @Body() track: ITrackData): Promise<string> {
     try {
-      const response = await this.playlistService.addTrackToPlaylist(id, track);
+      const userId = req.user.userId;
+      const response = await this.playlistService.addTrackToPlaylist(id, track, userId!);
 
       if (!response) {
         throw new Error("Resource not found!");
@@ -123,9 +130,10 @@ class PlaylistsController {
 
   @Delete("/:id/:trackId")
   @Security("jwt")
-  async removeTrackFromPlaylist(@Path() id: string, trackId: number): Promise<string> {
+  async removeTrackFromPlaylist(@Request() req: AuthenticatedRequest, @Path() id: string, trackId: number): Promise<string> {
     try {
-      const response = await this.playlistService.removeTrackFromPlaylist(id, trackId);
+      const userId = req.user.userId;
+      const response = await this.playlistService.removeTrackFromPlaylist(id, trackId, userId!);
 
       if (!response) {
         throw new Error("Resource not found!");

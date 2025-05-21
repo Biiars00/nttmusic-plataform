@@ -31,26 +31,25 @@ class UsersController {
   }
 
   @Post("/login")
-  async loginUser(@Body() body: Omit<IUserData, "userName">): Promise<string> {
-    const { userId, email, password } = body;
+  async loginUser(@Body() body: { email: string, password: string }): Promise<string> {
+    const { email, password } = body;
 
-    if (typeof userId !== "string" || typeof email !== "string" || typeof password !== "string") {
+    if (typeof email !== "string" || typeof password !== "string") {
       throw new Error("Email and password are required.");
     }
 
     try {
-      const response = await this.usersService.loginUser(userId, email, password);
+      const response = await this.usersService.loginUser(email, password);
 
       if (!response) {
         throw new Error("Resource not found!");
       }
 
-      const accessToken = generateToken({
-        userId: userId,
-        email: email,
-      });
+      // const accessToken = generateToken({
+      //   email: email,
+      // });
 
-      return accessToken;
+      return response;
     } catch (error) {
       throw new Error(`Internal server error - ${error}`);
     }

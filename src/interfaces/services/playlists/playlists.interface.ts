@@ -2,13 +2,13 @@ import { IPlaylistData } from "../../../interfaces/repositories/playlists/playli
 import { ITrackData } from "../musics/musics.interface";
 
 interface IPlaylistService {
-  addPlaylist(name: string): Promise<string>;
-  getPlaylist(): Promise<IPlaylistData[]>;
-  removePlaylist(playlistId: string): Promise<string>;
-  updateNamePlaylist(id: string, name: string): Promise<string>;
-  addTrackToPlaylist(playlistId: string, track: ITrackData): Promise<string>;
-  removeTrackFromPlaylist(playlistId: string, trackId: number): Promise<string>;
-  listTracksFromPlaylist(playlistId: string): Promise<ITrackData[]>;
+  addPlaylist(name: string, userId: string): Promise<string>;
+  getPlaylist(userId: string): Promise<IPlaylistData[]>;
+  removePlaylist(playlistId: string, userId: string): Promise<string>;
+  updateNamePlaylist(playlistId: string, name: string, userId: string): Promise<string>;
+  addTrackToPlaylist(playlistId: string, track: ITrackData, userId: string): Promise<string>;
+  removeTrackFromPlaylist(playlistId: string, trackId: number, userId: string): Promise<string>;
+  listTracksFromPlaylist(playlistId: string, userId: string): Promise<ITrackData[]>;
 }
 
 export default IPlaylistService;

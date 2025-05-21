@@ -40,16 +40,6 @@ const models: TsoaRoute.Models = {
         "type": {"ref":"Pick_IUserData.Exclude_keyofIUserData.userId__","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_IUserData.Exclude_keyofIUserData.userName__": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"userId":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"password":{"dataType":"string","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Omit_IUserData.userName_": {
-        "dataType": "refAlias",
-        "type": {"ref":"Pick_IUserData.Exclude_keyofIUserData.userName__","validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_IUserData.Exclude_keyofIUserData.password__": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"userId":{"dataType":"string","required":true},"userName":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}},"validators":{}},
@@ -141,7 +131,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUsersController_loginUser: Record<string, TsoaRoute.ParameterSchema> = {
-                body: {"in":"body","name":"body","required":true,"ref":"Omit_IUserData.userName_"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"password":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}}},
         };
         app.post('/user/login',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
@@ -232,6 +222,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPlaylistsController_addPlaylist: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true}}},
         };
         app.post('/playlist',
@@ -263,6 +254,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPlaylistsController_getPlaylist: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.get('/playlist',
             authenticateMiddleware([{"jwt":[]}]),
@@ -293,6 +285,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPlaylistsController_updateNamePlaylist: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true}}},
         };
@@ -325,6 +318,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPlaylistsController_removePlaylist: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
         app.delete('/playlist/:id',
@@ -356,6 +350,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPlaylistsController_listTracksFromPlaylist: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
         app.get('/playlist/:id',
@@ -387,6 +382,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPlaylistsController_addTrackToPlaylist: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 track: {"in":"body","name":"track","required":true,"ref":"ITrackData"},
         };
@@ -419,6 +415,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPlaylistsController_removeTrackFromPlaylist: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 trackId: {"in":"path","name":"trackId","required":true,"dataType":"double"},
         };

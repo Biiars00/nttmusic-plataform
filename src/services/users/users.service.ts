@@ -22,18 +22,17 @@ class UsersService implements IUsersService {
     return responseDB;
   }
 
-  async loginUser(userId: string, email: string, password: string): Promise<string> {
+  async loginUser(email: string, password: string): Promise<string> {
     let accessToken = "";
 
-    const responseDB = await this.usersFromDBRepository.getUserCheckFromDB(userId, email, password);
+    const responseDB = await this.usersFromDBRepository.getUserCheckFromDB(email, password);
 
     if (!responseDB) {
       throw new Error("User not exists!");
     }
 
     if (
-      responseDB.userId === userId &&
-      responseDB.email === email &&
+      responseDB.userId && responseDB.email === email &&
       responseDB.password === password
     ) {
       accessToken = generateToken({

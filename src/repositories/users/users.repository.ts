@@ -64,22 +64,25 @@ class UsersFromDBRepository implements IUserFromDBRepository {
   }
 
   async getUserCheckFromDB(
-    userId: string,
     email: string,
     password: string,
   ): Promise<Partial<IUserData>> {
-    const refDB = await this.db.doc(userId).get();
+    const refDB = this.db
+      .where('email', '==', email)
+      .where('password', '==', password);
+    
+    const snapshot = await refDB.get();
+    const doc = snapshot.docs[0];
+    const data = doc.data() as IUserData;
 
-    const data = refDB.data() as IUserData;
-
-    if (data && data.userId === userId && data.email === email && data.password === password) {
+    if (data) {
       return {
         userId: data.userId,
         email: data.email,
         password: data.password,
       };
     } else {
-      throw new Error("User not found!");
+      throw new Error('User not found!');
     }
   }
 }
