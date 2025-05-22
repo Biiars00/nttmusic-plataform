@@ -1,8 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { Body, Get, Path, Post, Route, Security, Tags } from "tsoa";
-import { IUserData } from "../../interfaces/repositories/users/users.interface";
+import { IUserData, IUserDataLogin, IUserDataWithoutPassword, IUserDataWithoutUserId } from "../../interfaces/repositories/users/users.interface";
 import UsersService from "../../services/users/users.service";
-import { generateToken } from "../../config/jwtAuthentication";
 
 @injectable()
 @Route("user")
@@ -14,11 +13,13 @@ class UsersController {
   ) {}
 
   @Post("/sign-up")
-  async addUser(@Body() body: Omit<IUserData, "userId">): Promise<IUserData> {
-    const { userName, email, password } = body;
-
+  async addUser(@Body() body: IUserDataWithoutUserId): Promise<IUserData> {
     try {
-      const response = await this.usersService.addUser(userName, email, password);
+      if (!body.email || !body.password || !body.userName) {
+        throw new Error("Email, password and userName are required.");
+      }
+
+      const response = await this.usersService.addUser(body);
 
       if (!response) {
         throw new Error("Resource not found!");
@@ -31,23 +32,17 @@ class UsersController {
   }
 
   @Post("/login")
-  async loginUser(@Body() body: { email: string, password: string }): Promise<string> {
-    const { email, password } = body;
-
-    if (typeof email !== "string" || typeof password !== "string") {
-      throw new Error("Email and password are required.");
-    }
-
+  async loginUser(@Body() body: IUserDataLogin): Promise<string> {
     try {
-      const response = await this.usersService.loginUser(email, password);
+      if (typeof body.email !== "string" || typeof body.password !== "string") {
+        throw new Error("Email and password are required.");
+      }
+
+      const response = await this.usersService.loginUser(body);
 
       if (!response) {
         throw new Error("Resource not found!");
       }
-
-      // const accessToken = generateToken({
-      //   email: email,
-      // });
 
       return response;
     } catch (error) {
@@ -57,7 +52,7 @@ class UsersController {
 
   @Security("jwt")
   @Get("/")
-  async getUsers(): Promise<IUserData[]> {
+  async getUsers(): Promise<IUserDataWithoutPassword[]> {
     try {
       const response = await this.usersService.getUsers();
 
@@ -73,11 +68,11 @@ class UsersController {
 
   @Security("jwt")
   @Get("/:userId")
-  async getUserById(@Path() userId: string): Promise<Omit<IUserData, "password">> {
+  async getUserById(@Path() userId: string): Promise<IUserDataWithoutPassword> {
     try {
-      if (!userId) {
-        throw new Error("Resource is missing!");
-      }
+        if (!userId) {
+          throw new Error("Resource is missing!");
+        }
 
       const response = await this.usersService.getUserById(userId);
 

@@ -1,6 +1,9 @@
 import { generateToken } from "../../config/jwtAuthentication";
 import IUsersFromDBRepository, {
   IUserData,
+  IUserDataLogin,
+  IUserDataWithoutPassword,
+  IUserDataWithoutUserId,
 } from "../../interfaces/repositories/users/users.interface";
 import IUsersService from "../../interfaces/services/users/users.interface";
 import { inject, injectable } from "tsyringe";
@@ -12,8 +15,8 @@ class UsersService implements IUsersService {
     private usersFromDBRepository: IUsersFromDBRepository,
   ) {}
 
-  async addUser(userName: string, email: string, password: string): Promise<IUserData> {
-    const responseDB = await this.usersFromDBRepository.addUserFromDB(userName, email, password);
+  async addUser(data: IUserDataWithoutUserId): Promise<IUserData> {
+    const responseDB = await this.usersFromDBRepository.addUserFromDB(data);
 
     if (!responseDB) {
       throw new Error("Data not found!");
@@ -22,18 +25,18 @@ class UsersService implements IUsersService {
     return responseDB;
   }
 
-  async loginUser(email: string, password: string): Promise<string> {
+  async loginUser(data: IUserDataLogin): Promise<string> {
     let accessToken = "";
 
-    const responseDB = await this.usersFromDBRepository.getUserCheckFromDB(email, password);
+    const responseDB = await this.usersFromDBRepository.getUserCheckFromDB(data);
 
     if (!responseDB) {
       throw new Error("User not exists!");
     }
 
     if (
-      responseDB.userId && responseDB.email === email &&
-      responseDB.password === password
+      responseDB.userId && responseDB.email === data.email &&
+      responseDB.password === data.password
     ) {
       accessToken = generateToken({
         userId: responseDB.userId,
@@ -48,13 +51,17 @@ class UsersService implements IUsersService {
     return accessToken;
   }
 
-  async getUsers(): Promise<IUserData[]> {
+  async getUsers(): Promise<IUserDataWithoutPassword[]> {
     const responseDB = await this.usersFromDBRepository.getUsersFromDB();
+
+    if(!responseDB) {
+      throw new Error("Data not found!");
+    }
 
     return responseDB;
   }
 
-  async getUserById(userId: string): Promise<Omit<IUserData, "password">> {
+  async getUserById(userId: string): Promise<IUserDataWithoutPassword> {
     const responseDB = await this.usersFromDBRepository.getUserByIdFromDB(userId);
 
     if (!responseDB) {

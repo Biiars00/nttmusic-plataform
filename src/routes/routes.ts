@@ -30,30 +30,39 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_IUserData.Exclude_keyofIUserData.userId__": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"userName":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"password":{"dataType":"string","required":true}},"validators":{}},
+    "IUserDataWithoutUserId": {
+        "dataType": "refObject",
+        "properties": {
+            "userName": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+            "password": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Omit_IUserData.userId_": {
-        "dataType": "refAlias",
-        "type": {"ref":"Pick_IUserData.Exclude_keyofIUserData.userId__","validators":{}},
+    "IUserDataLogin": {
+        "dataType": "refObject",
+        "properties": {
+            "email": {"dataType":"string","required":true},
+            "password": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_IUserData.Exclude_keyofIUserData.password__": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"userId":{"dataType":"string","required":true},"userName":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Omit_IUserData.password_": {
-        "dataType": "refAlias",
-        "type": {"ref":"Pick_IUserData.Exclude_keyofIUserData.password__","validators":{}},
+    "IUserDataWithoutPassword": {
+        "dataType": "refObject",
+        "properties": {
+            "userId": {"dataType":"string","required":true},
+            "userName": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IPlaylistData": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"string","required":true},
+            "playlistId": {"dataType":"string","required":true},
             "name": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
@@ -101,7 +110,7 @@ export function RegisterRoutes(app: Router) {
 
     
         const argsUsersController_addUser: Record<string, TsoaRoute.ParameterSchema> = {
-                body: {"in":"body","name":"body","required":true,"ref":"Omit_IUserData.userId_"},
+                body: {"in":"body","name":"body","required":true,"ref":"IUserDataWithoutUserId"},
         };
         app.post('/user/sign-up',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
@@ -131,7 +140,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUsersController_loginUser: Record<string, TsoaRoute.ParameterSchema> = {
-                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"password":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}}},
+                body: {"in":"body","name":"body","required":true,"ref":"IUserDataLogin"},
         };
         app.post('/user/login',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),

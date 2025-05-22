@@ -1,6 +1,10 @@
 import { injectable } from "tsyringe";
 import IUserFromDBRepository, {
   IUserData,
+  IUserDataLogin,
+  IUserDataLoginCheck,
+  IUserDataWithoutPassword,
+  IUserDataWithoutUserId,
 } from "../../interfaces/repositories/users/users.interface";
 import databaseConfig from "../../config/databaseConfig";
 
@@ -12,26 +16,26 @@ class UsersFromDBRepository implements IUserFromDBRepository {
     this.db = databaseConfig.firestore().collection("users");
   }
 
-  async addUserFromDB(userName: string, email: string, password: string): Promise<IUserData> {
+  async addUserFromDB(data: IUserDataWithoutUserId): Promise<IUserData> {
     const refDB = this.db;
 
     const docRef = await refDB.add({
-      userName: userName,
-      email: email,
-      password: password,
+      userName: data.userName,
+      email: data.email,
+      password: data.password,
     });
 
     docRef.update({ userId: docRef.id });
 
     return {
       userId: docRef.id,
-      userName: userName,
-      email: email,
-      password: password,
+      userName: data.userName,
+      email: data.email,
+      password:data. password,
     };
   }
 
-  async getUsersFromDB(): Promise<IUserData[]> {
+  async getUsersFromDB(): Promise<IUserDataWithoutPassword[]> {
     const refDB = await this.db.get();
 
     const usersList = refDB.docs.map((doc) => {
@@ -47,7 +51,7 @@ class UsersFromDBRepository implements IUserFromDBRepository {
     return usersList;
   }
 
-  async getUserByIdFromDB(userId: string): Promise<Omit<IUserData, "password">> {
+  async getUserByIdFromDB(userId: string): Promise<IUserDataWithoutPassword> {
     const refDB = await this.db.doc(userId).get();
 
     if (refDB.exists) {
@@ -63,21 +67,18 @@ class UsersFromDBRepository implements IUserFromDBRepository {
     }
   }
 
-  async getUserCheckFromDB(
-    email: string,
-    password: string,
-  ): Promise<Partial<IUserData>> {
+  async getUserCheckFromDB(data: IUserDataLogin): Promise<IUserDataLoginCheck> {
     const refDB = this.db
-      .where('email', '==', email)
-      .where('password', '==', password);
+      .where('email', '==', data.email)
+      .where('password', '==', data.password);
     
     const snapshot = await refDB.get();
     const doc = snapshot.docs[0];
-    const data = doc.data() as IUserData;
+    const dataDoc = doc.data() as IUserData;
 
     if (data) {
       return {
-        userId: data.userId,
+        userId: dataDoc.userId,
         email: data.email,
         password: data.password,
       };
