@@ -129,7 +129,11 @@ Authorization: Bearer <seu_token_aqui>
 
 ## Documentação da API
 
-[Swagger Doc](/docs)
+Link: [Swagger Doc](/docs)
+
+![Documentação da API](public/swagger.png)
+
+
 
 ## Links do Projeto Front-end
 
