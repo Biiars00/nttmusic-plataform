@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import UsersService from "../../../services/users/users.service";
-import IUsersFromDBRepository from "../../../interfaces/repositories/users/users.interface";
+import IUsersFromDBRepository, { IUserData, IUserDataLogin, IUserDataLoginCheck, IUserDataWithoutPassword, IUserDataWithoutUserId } from "../../../interfaces/repositories/users/users.interface";
 import { generateToken } from "../../../config/jwtAuthentication";
 
 jest.mock("../../../config/jwtAuthentication", () => ({
@@ -14,12 +14,36 @@ const mockRepository: jest.Mocked<IUsersFromDBRepository> = {
   getUserCheckFromDB: jest.fn(),
 };
 
-const userData = {
-    userId: "id",
-    userName: "userName",
-    email: "email@email.com",
-    password: "password"
+const userData: IUserData = {
+  userId: "id",
+  userName: "userName",
+  email: "email@email.com",
+  password: "password"
 };
+
+const userDataWithoutUserId: IUserDataWithoutUserId = {
+  userName: "userName",
+  email: "email@email.com",
+  password: "password"
+}
+
+const userDataWithoutPassword: IUserDataWithoutPassword = {
+  userId: "id",
+  userName: "userName",
+  email: "email@email.com",
+}
+
+const userDataLogin: IUserDataLogin = {
+  email: "email@email.com",
+  password: "password"
+}
+
+const userDataLoginCheck: IUserDataLoginCheck = {
+  userId: "id",
+  email: "email@email.com",
+  password: "password"
+}
+
 
 describe("UsersService", () => {
   let service: UsersService;
@@ -31,12 +55,18 @@ describe("UsersService", () => {
 
   describe("getUsers", () => {
     it("Must list all users", async () => {
-      mockRepository.getUsersFromDB.mockResolvedValue([userData]);
+      mockRepository.getUsersFromDB.mockResolvedValue([userDataWithoutPassword]);
 
       const result = await service.getUsers();
 
-      expect(result).toEqual([userData]);
+      expect(result).toEqual([userDataWithoutPassword]);
       expect(mockRepository.getUsersFromDB).toHaveBeenCalled();
+    });
+
+    it("Should throw error if user list is not returned", async () => {
+      mockRepository.getUsersFromDB.mockResolvedValue(null as any);
+
+      await expect(service.getUsers()).rejects.toThrow("Data not found!");
     });
   });
 
@@ -44,33 +74,29 @@ describe("UsersService", () => {
     it("Must add a user", async () => {
       mockRepository.addUserFromDB.mockResolvedValue(userData);
 
-      const result = await service.addUser("userName", "email@email.com", "password");
+      const result = await service.addUser(userDataWithoutUserId);
 
       expect(result).toEqual(userData);
       expect(mockRepository.addUserFromDB).toHaveBeenCalled();
     });
 
-    it("Should throw error if tracks list is not returned", async () => {
+    it("Should throw error if users list is not returned", async () => {
       mockRepository.addUserFromDB.mockResolvedValue(null as any);
 
-      await expect(service.addUser("userName", "email@email.com", "password")).rejects.toThrow("Data not found!");
+      await expect(service.addUser(userDataWithoutUserId)).rejects.toThrow("Data not found!");
     });
   });
 
   describe("loginUser", () => {
     it("Should return token for valid credentials", async () => {
-      mockRepository.getUserCheckFromDB.mockResolvedValue({
-        userId: "1",
-        email: "email@email.com",
-        password: "password",
-      });
+      mockRepository.getUserCheckFromDB.mockResolvedValue(userDataLoginCheck);
 
-      const token = await service.loginUser("email@email.com", "password");
+      const token = await service.loginUser(userDataLogin);
 
       expect(token).toBe("fake-jwt-token");
-      expect(mockRepository.getUserCheckFromDB).toHaveBeenCalledWith("email@email.com", "password");
+      expect(mockRepository.getUserCheckFromDB).toHaveBeenCalledWith(userDataLogin);
       expect(generateToken).toHaveBeenCalledWith({
-        userId: "1",
+        userId: "id",
         email: "email@email.com",
       });
     });
@@ -78,31 +104,30 @@ describe("UsersService", () => {
     it("Should throw error if user does not exist", async () => {
       mockRepository.getUserCheckFromDB.mockResolvedValue(null as any);
 
-      await expect(service.loginUser("1", "bia@email.com"))
+      await expect(service.loginUser(userDataLogin))
         .rejects.toThrow("User not exists!");
     });
 
     it("Should throw error if credentials are invalid", async () => {
-      mockRepository.getUserCheckFromDB.mockResolvedValue({
-        ...userData,
-        email: "b@email.com",
-        password: "321"
-      });
+       const invalidLogin: IUserDataLogin = {
+        email: "test@email.com",
+        password: "pass"
+      };
+      mockRepository.getUserCheckFromDB.mockResolvedValue(userDataLoginCheck);
 
-      await expect(service.loginUser("1", "bia@email.com"))
+      await expect(service.loginUser(invalidLogin))
         .rejects.toThrow("Invalid credentials!");
     });
   });
 
   describe("getUserById", () => {
     it("Should return user by id without password", async () => {
-      const { password, ...userWithoutPassword } = userData;
-      mockRepository.getUserByIdFromDB.mockResolvedValue(userWithoutPassword);
+      mockRepository.getUserByIdFromDB.mockResolvedValue(userDataWithoutPassword);
 
-      const result = await service.getUserById("123");
+      const result = await service.getUserById("id");
 
-      expect(result).toEqual(userWithoutPassword);
-      expect(mockRepository.getUserByIdFromDB).toHaveBeenCalledWith("123");
+      expect(result).toEqual(userDataWithoutPassword);
+      expect(mockRepository.getUserByIdFromDB).toHaveBeenCalledWith("id");
     });
 
     it("Should throw error if user not found", async () => {
