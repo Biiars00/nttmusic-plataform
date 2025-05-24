@@ -12,10 +12,10 @@ dotenv.config();
 const app: Application = express();
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL_DEV || '',
-  process.env.FRONTEND_URL_PROD || '',
-  process.env.BACKEND_PROD || '',
-  process.env.BACKEND_DEV || '',
+  process.env.REACT_APP_API_URL_DEV || '',
+  process.env.REACT_APP_API_URL_PROD || '',
+  process.env.REACT_APP_API_URL_PROD_BACK || '',
+  process.env.REACT_APP_API_URL_DEV_BACK || '',
 ];
 
 app.use(
