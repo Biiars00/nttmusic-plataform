@@ -81,6 +81,8 @@ Antes de começar, você precisará ter os seguintes softwares instalados:
    npm run dev
    ```
 
+   > *OBS*: O deploy da aplicação está disponível em [NttMusic Server](https://nttmusic-plataform.onrender.com)
+
 ## Estrutura de Diretórios
 
     elderly-care/
@@ -129,7 +131,7 @@ Authorization: Bearer <seu_token_aqui>
 
 ## Documentação da API
 
-Link: [Swagger Doc](/docs)
+Link: [Swagger Doc](https://nttmusic-plataform.onrender.com/docs)
 
 ![Documentação da API](public/swagger.png)
 
@@ -137,8 +139,8 @@ Link: [Swagger Doc](/docs)
 
 ## Links do Projeto Front-end
 
-- [NttMusic Plataform - Produção]()
-- [NttMusic Plataform - Github]()
+- [NttMusic Plataform - Produção](https://nttmusic-plataform-frontend-q5nte751o.vercel.app)
+- [NttMusic Plataform - Github](https://github.com/Biiars00/nttmusic-plataform-frontend)
 
 ## Contribuições
 
@@ -152,3 +154,5 @@ Contribuições são super bem-vindas! Para colaborar:
 ## Licença
 
 Este projeto está licenciado sob a [MIT License](https://opensource.org/license/mit).
+
+#### Desenvolvido por [Beatriz Ribeiro](https://github.com/Biiars00) ❤️
