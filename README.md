@@ -26,6 +26,7 @@
 - **Jest** – Para testes.
 - **dotenv** – Para variáveis de ambiente.
 - **Tsoa** – Para socumentar a API no Swagger de forma dinâmica.
+- **Docker** – Para criar ambientes isolados e portáveis, facilitando o deploy da aplicação.
 
 ## Pré-requisitos
 
@@ -139,7 +140,7 @@ Link: [Swagger Doc](https://nttmusic-plataform.onrender.com/docs)
 
 ## Links do Projeto Front-end
 
-- [NttMusic Plataform - Produção](https://nttmusic-plataform-frontend-q5nte751o.vercel.app)
+- [NttMusic Plataform - Produção](https://nttmusic-plataform-frontend.vercel.app)
 - [NttMusic Plataform - Github](https://github.com/Biiars00/nttmusic-plataform-frontend)
 
 ## Contribuições
