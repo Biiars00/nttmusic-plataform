@@ -86,7 +86,7 @@ Antes de começar, você precisará ter os seguintes softwares instalados:
 
 ## Estrutura de Diretórios
 
-    elderly-care/
+    NttMusic/
     ├── src/
     │   ├── config/
     │   ├── controllers/
